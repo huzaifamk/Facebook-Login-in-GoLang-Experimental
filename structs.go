@@ -22,25 +22,6 @@ type Claims struct {
 	jwt.StandardClaims
 }
 
-// RegistationParams is struct to read the request body
-type RegistationParams struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
-// LoginParams is struct to read the request body
-type LoginParams struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
-// SuccessfulLoginResponse is struct to send the request response
-type SuccessfulLoginResponse struct {
-	Email     string
-	AuthToken string
-}
-
 // UserDetails is struct used for user details
 type UserDetails struct {
 	Name     string
