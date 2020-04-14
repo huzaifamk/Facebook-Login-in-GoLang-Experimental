@@ -31,9 +31,6 @@ func InitFacebookLogin(response http.ResponseWriter, request *http.Request) {
 
 // HandleFacebookLogin function will handle the Facebook Login Callback
 func HandleFacebookLogin(response http.ResponseWriter, request *http.Request) {
-
-	var fbUserDetails FacebookUserDetails
-
 	var state = request.FormValue("state")
 	var code = request.FormValue("code")
 
@@ -49,18 +46,9 @@ func HandleFacebookLogin(response http.ResponseWriter, request *http.Request) {
 		http.Redirect(response, request, "/?invalidlogin=true", http.StatusTemporaryRedirect)
 	}
 
-	facebookUserDetailsRequest, _ := http.NewRequest("GET", "https://graph.facebook.com/me?fields=id,name,email&access_token="+token.AccessToken, nil)
-	facebookUserDetailsResponse, facebookUserDetailsResponseError := http.DefaultClient.Do(facebookUserDetailsRequest)
+	fbUserDetails, fbUserDetailsError := GetUserInfoFromFacebook(token.AccessToken)
 
-	if facebookUserDetailsResponseError != nil {
-		http.Redirect(response, request, "/?invalidlogin=true", http.StatusTemporaryRedirect)
-	}
-
-	decoder := json.NewDecoder(facebookUserDetailsResponse.Body)
-	decoderErr := decoder.Decode(&fbUserDetails)
-	defer facebookUserDetailsResponse.Body.Close()
-
-	if decoderErr != nil {
+	if fbUserDetailsError != nil {
 		http.Redirect(response, request, "/?invalidlogin=true", http.StatusTemporaryRedirect)
 	}
 

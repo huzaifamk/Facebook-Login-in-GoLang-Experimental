@@ -1,6 +1,9 @@
 package main
 
 import (
+	"encoding/json"
+	"errors"
+	"net/http"
 	"os"
 
 	"golang.org/x/oauth2"
@@ -18,7 +21,28 @@ func GetFacebookOAuthConfig() *oauth2.Config {
 	}
 }
 
-// GetRandomOAuthStateString will return raandom string
+// GetRandomOAuthStateString will return random string
 func GetRandomOAuthStateString() string {
 	return "SomeRandomStringAlgorithmForMoreSecuity"
+}
+
+// GetUserInfoFromFacebook will return information of user which is fetched from facebook
+func GetUserInfoFromFacebook(token string) (FacebookUserDetails, error) {
+	var fbUserDetails FacebookUserDetails
+	facebookUserDetailsRequest, _ := http.NewRequest("GET", "https://graph.facebook.com/me?fields=id,name,email&access_token="+token, nil)
+	facebookUserDetailsResponse, facebookUserDetailsResponseError := http.DefaultClient.Do(facebookUserDetailsRequest)
+
+	if facebookUserDetailsResponseError != nil {
+		return FacebookUserDetails{}, errors.New("Error occurred while getting information from Facebook")
+	}
+
+	decoder := json.NewDecoder(facebookUserDetailsResponse.Body)
+	decoderErr := decoder.Decode(&fbUserDetails)
+	defer facebookUserDetailsResponse.Body.Close()
+
+	if decoderErr != nil {
+		return FacebookUserDetails{}, errors.New("Error occurred while getting information from Facebook")
+	}
+
+	return fbUserDetails, nil
 }
