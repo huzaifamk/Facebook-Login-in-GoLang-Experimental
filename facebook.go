@@ -23,7 +23,7 @@ func GetFacebookOAuthConfig() *oauth2.Config {
 
 // GetRandomOAuthStateString will return random string
 func GetRandomOAuthStateString() string {
-	return "SomeRandomStringAlgorithmForMoreSecuity"
+	return "SomeRandomStringAlgorithmForMoreSecurity"
 }
 
 // GetUserInfoFromFacebook will return information of user which is fetched from facebook
